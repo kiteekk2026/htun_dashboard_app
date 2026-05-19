@@ -18,7 +18,7 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
+    //"baseUrl": ".",// Uncomment this line in Chapter 7
     "paths": {
       "@/*": ["./*"]
     }
