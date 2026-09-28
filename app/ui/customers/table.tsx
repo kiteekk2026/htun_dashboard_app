@@ -1,22 +1,26 @@
 import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import Search from '@/app/ui/search';
-import {
-  CustomersTableType,
-  FormattedCustomersTable,
-} from '@/app/lib/definitions';
+import { fetchFilteredCustomers } from '@/app/lib/data';
+import type { FormattedCustomersTable } from '@/app/lib/definitions';
 
-export default async function CustomersTable({
-  customers,
-}: {
-  customers: FormattedCustomersTable[];
-}) {
+export default async function CustomersTable({ query, currentPage }: { query: string; currentPage: number }) {
+  const customers = await fetchFilteredCustomers(query, currentPage);
+
+  if (customers.length === 0) {
+    return (
+      <div className="mt-6 rounded-md bg-gray-50 p-8 text-center">
+        <p className="text-sm text-gray-600">
+          {query
+            ? `"${query}" Not Found`
+            : 'Customers not found. Please add a customer to get started.'}
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
-        Customers
-      </h1>
-      <Search placeholder="Search customers..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">

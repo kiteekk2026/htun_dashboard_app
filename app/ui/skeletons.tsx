@@ -216,3 +216,26 @@ export function InvoicesTableSkeleton() {
     </div>
   );
 }
+export function CustomersTableSkeleton() {
+  return (
+    <div className="mt-6 flow-root">
+      <div className={`${shimmer} relative overflow-hidden rounded-lg bg-gray-50 p-2 md:pt-0`}>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between border-b border-gray-100 py-4 last:border-none"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-gray-200" />
+              <div className="space-y-2">
+                <div className="h-4 w-32 rounded bg-gray-200" />
+                <div className="h-3 w-44 rounded bg-gray-200" />
+              </div>
+            </div>
+            <div className="h-4 w-20 rounded bg-gray-200" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
