@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import Search from '@/app/ui/search';
@@ -42,7 +43,12 @@ export default async function CustomersTable({ query, currentPage }: { query: st
                               width={28}
                               height={28}
                             />
-                            <p>{customer.name}</p>
+                            <Link
+                             href={`/dashboard/customers/${customer.id}`}
+                              className="hover:underline"
+                              >
+                             {customer.name}
+                             </Link>
                           </div>
                         </div>
                         <p className="text-sm text-gray-500">
@@ -91,16 +97,21 @@ export default async function CustomersTable({ query, currentPage }: { query: st
                   {customers.map((customer) => (
                     <tr key={customer.id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <Image
-                            src={customer.image_url}
-                            className="rounded-full"
-                            alt={`${customer.name}'s profile picture`}
-                            width={28}
-                            height={28}
-                          />
-                          <p>{customer.name}</p>
-                        </div>
+                       <div className="flex items-center gap-3">
+                         <Image
+                             src={customer.image_url}
+                             className="rounded-full"
+                             alt={`${customer.name}'s profile picture`}
+                             width={28}
+                             height={28}
+                            />
+                              <Link
+                            href={`/dashboard/customers/${customer.id}`}
+                          className="hover:text-blue-600 hover:underline"
+                           >
+                           {customer.name}
+                         </Link>
+                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {customer.email}

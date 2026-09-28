@@ -1,3 +1,6 @@
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 import postgres from 'postgres';
 import {
   CustomerField,
@@ -236,5 +239,58 @@ export async function fetchCustomersPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of customers.');
+  }
+}
+
+export async function fetchCustomerById(id: string) {
+  // UUID မဟုတ်ရင် Postgres ကို မခေါ်ဘဲ undefined ပြန် → page က notFound()
+  if (!UUID_RE.test(id)) return undefined;
+
+  try {
+    const data = await sql<CustomersTableType[]>`
+      SELECT
+        customers.id,
+        customers.name,
+        customers.email,
+        customers.image_url,
+        COUNT(invoices.id) AS total_invoices,
+        SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
+        SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
+      FROM customers
+      LEFT JOIN invoices ON customers.id = invoices.customer_id
+      WHERE customers.id = ${id}
+      GROUP BY customers.id, customers.name, customers.email, customers.image_url
+    `;
+
+    const customer = data[0];
+    if (!customer) return undefined;
+
+    return {
+      ...customer,
+      total_pending: formatCurrency(customer.total_pending),
+      total_paid: formatCurrency(customer.total_paid),
+    };
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch customer.');
+  }
+}
+
+export async function fetchInvoicesByCustomerId(id: string) {
+  if (!UUID_RE.test(id)) return [];
+
+  try {
+    const invoices = await sql<
+      { id: string; date: string; amount: number; status: 'pending' | 'paid' }[]
+    >`
+      SELECT id, date, amount, status
+      FROM invoices
+      WHERE customer_id = ${id}
+      ORDER BY date DESC
+    `;
+    return invoices;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch customer invoices.');
   }
 }
