@@ -1,9 +1,12 @@
 import Link from 'next/link';
+import { UpdateCustomer } from '@/app/ui/customers/buttons';
+
 import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import Search from '@/app/ui/search';
 import { fetchFilteredCustomers } from '@/app/lib/data';
 import type { FormattedCustomersTable } from '@/app/lib/definitions';
+import { DeleteCustomer } from '@/app/ui/customers/delete-customer';
 
 export default async function CustomersTable({ query, currentPage }: { query: string; currentPage: number }) {
   const customers = await fetchFilteredCustomers(query, currentPage);
@@ -66,8 +69,17 @@ export default async function CustomersTable({ query, currentPage }: { query: st
                         <p className="font-medium">{customer.total_paid}</p>
                       </div>
                     </div>
-                    <div className="pt-4 text-sm">
-                      <p>{customer.total_invoices} invoices</p>
+                    <div className="flex items-center justify-between pt-4 text-sm">
+                     <p>{customer.total_invoices} invoices</p>
+                      <div className="flex gap-2">
+                      <UpdateCustomer id={customer.id} />
+                      <DeleteCustomer
+                      id={customer.id}
+                       name={customer.name}
+                       query={query}
+                       page={currentPage}
+                      />
+                     </div>
                     </div>
                   </div>
                 ))}
@@ -89,6 +101,9 @@ export default async function CustomersTable({ query, currentPage }: { query: st
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Total Paid
+                    </th>
+                     <th scope="col" className="relative py-3 pl-6 pr-3">
+                     <span className="sr-only">Edit</span>
                     </th>
                   </tr>
                 </thead>
@@ -124,6 +139,17 @@ export default async function CustomersTable({ query, currentPage }: { query: st
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {customer.total_paid}
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-3 pl-6 pr-3 group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                       <div className="flex justify-end gap-3">
+                           <UpdateCustomer id={customer.id} />
+                            <DeleteCustomer
+                             id={customer.id}
+                             name={customer.name}
+                             query={query}
+                             page={currentPage}
+                            />
+                        </div>
                       </td>
                     </tr>
                   ))}

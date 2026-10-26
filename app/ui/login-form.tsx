@@ -9,8 +9,10 @@ import {
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
 import { useActionState } from 'react';
-import { authenticate } from '@/app/lib/actions';
+// import { authenticate } from '@/app/lib/actions'; အစားအောက်ကထည့်
+import { authenticate, signInWithGithub, signInWithGoogle } from '@/app/lib/actions';
 import { useSearchParams } from 'next/navigation';
+
 
 export default function LoginForm() {
     const searchParams = useSearchParams();
@@ -21,6 +23,7 @@ export default function LoginForm() {
   );
 
   return (
+    <>
     <form action={formAction} className="space-y-3">
         <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
@@ -85,5 +88,20 @@ export default function LoginForm() {
         </div>
       </div>
     </form>
+
+    <form action={signInWithGithub}>
+      <input type="hidden" name="redirectTo" value={callbackUrl} />
+      <button className="flex h-10 w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100">
+        Continue with GitHub
+      </button>
+    </form>
+
+        <form action={signInWithGoogle} className="mt-2">
+      <input type="hidden" name="redirectTo" value={callbackUrl} />
+      <button className="flex h-10 w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100">
+        Continue with Google
+      </button>
+    </form>
+    </>
   );
 }
